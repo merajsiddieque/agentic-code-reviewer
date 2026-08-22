@@ -1,0 +1,44 @@
+# Environment
+.env
+.env.*
+!.env.example
+!backend/.env.example
+!frontend/.env.example
+backend/.env
+frontend/.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+build/
+dist/
+wheels/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+
+# Node
+node_modules/
+frontend/node_modules/
+
+# Build & Bundling
+frontend/dist/
+dist/
+build/
+
+# Reports & Local artifacts
+backend/reports/
+
+# Logs
+*.log
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

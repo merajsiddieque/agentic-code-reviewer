@@ -1,0 +1,33 @@
+[project]
+name = "agentic-code-reviewer"
+version = "0.1.0"
+description = "Multi-language Agentic Code Reviewer using LangGraph & Gemini"
+readme = "README.md"
+requires-python = ">=3.12"
+
+authors = [
+    { name = "Meraj Alam Siddique", email = "merajsiddieque@gmail.com" }
+]
+
+dependencies = [
+    "bandit>=1.7.8",
+    "fastapi>=0.110.0",
+    "flake8>=7.0.0",
+    "langchain>=0.2.0",
+    "langchain-core>=0.2.0",
+    "langchain-google-genai>=1.0.0",
+    "langgraph>=1.2.11",
+    "pydantic>=2.6.0",
+    "pydantic-settings>=2.2.0",
+    "python-dotenv>=1.0.1",
+    "python-multipart>=0.0.20",
+    "uvicorn[standard]>=0.28.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.pyright]
+include = ["backend"]
+extraPaths = ["."]

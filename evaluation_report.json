@@ -1,0 +1,26 @@
+{
+  "summary": {
+    "total_samples": 1,
+    "passed_samples": 1,
+    "failed_samples": 0,
+    "overall_precision": 1.0,
+    "overall_recall": 1.0,
+    "overall_f1": 1.0,
+    "overall_exact_match_rate": 1.0
+  },
+  "per_example_scores": [
+    {
+      "id": 1,
+      "title": "Hardcoded Password",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "exact_match": 1.0,
+      "matched_findings": [
+        "Hardcoded credential"
+      ],
+      "missing_findings": []
+    }
+  ],
+  "failed_cases": []
+}

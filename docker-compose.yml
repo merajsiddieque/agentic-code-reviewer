@@ -1,0 +1,15 @@
+services:
+  agentic-code-reviewer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: agentic-code-reviewer
+
+    ports:
+      - "8000:8000"
+
+    env_file:
+      - backend/.env
+
+    restart: unless-stopped

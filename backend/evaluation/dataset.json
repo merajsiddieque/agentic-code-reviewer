@@ -1,0 +1,112 @@
+[
+  {
+    "id": 1,
+    "title": "Hardcoded Password",
+    "code": "DB_USER = 'admin'\nDB_PASSWORD = 'SuperSecretPassword99!'\n\ndef connect_db():\n    return f'Connecting with {DB_USER}:{DB_PASSWORD}'",
+    "expected_findings": [
+      "Hardcoded credential",
+      "High severity",
+      "DB_PASSWORD",
+      "environment variables"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Dangerous eval() Usage",
+    "code": "def evaluate_expression(user_input: str):\n    # Evaluate arbitrary expression\n    result = eval(user_input)\n    return result",
+    "expected_findings": [
+      "eval",
+      "Remote Code Execution",
+      "High severity",
+      "literal_eval"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Command Injection Risk",
+    "code": "import subprocess\n\ndef ping_server(target_ip: str):\n    cmd = f'ping -c 1 {target_ip}'\n    return subprocess.check_output(cmd, shell=True)",
+    "expected_findings": [
+      "shell=True",
+      "Command Injection",
+      "High severity",
+      "subprocess"
+    ]
+  },
+  {
+    "id": 4,
+    "title": "Insecure Deserialization",
+    "code": "import pickle\n\ndef deserialize_session(payload: bytes):\n    return pickle.loads(payload)",
+    "expected_findings": [
+      "pickle.loads",
+      "Insecure Deserialization",
+      "High severity",
+      "arbitrary code execution"
+    ]
+  },
+  {
+    "id": 5,
+    "title": "Dangerous exec() Usage",
+    "code": "def run_dynamic_code(script_text: str):\n    exec(script_text)\n    return True",
+    "expected_findings": [
+      "exec",
+      "Dynamic code execution",
+      "High severity",
+      "Remote Code Execution"
+    ]
+  },
+  {
+    "id": 6,
+    "title": "SQL Injection Vulnerability",
+    "code": "import sqlite3\n\ndef get_user_record(cursor, user_id: str):\n    query = f'SELECT * FROM users WHERE id = {user_id}'\n    return cursor.execute(query).fetchall()",
+    "expected_findings": [
+      "SQL Injection",
+      "High severity",
+      "parameterized query",
+      "placeholders"
+    ]
+  },
+  {
+    "id": 7,
+    "title": "Bare Exception and Resource Leak",
+    "code": "def read_log_file(filepath: str):\n    try:\n        f = open(filepath, 'r')\n        data = f.read()\n        return data\n    except:\n        return None",
+    "expected_findings": [
+      "bare except",
+      "resource leak",
+      "with statement",
+      "FileNotFoundError"
+    ]
+  },
+  {
+    "id": 8,
+    "title": "Mutable Default Argument and Unused Imports",
+    "code": "import os\nimport sys\nimport math\n\ndef append_item(item, target_list=[]):\n    target_list.append(item)\n    return target_list",
+    "expected_findings": [
+      "mutable default",
+      "target_list",
+      "unused import",
+      "None"
+    ]
+  },
+  {
+    "id": 9,
+    "title": "Unhandled Zero Division Error",
+    "code": "def calculate_average(scores: list[float]) -> float:\n    # Calculates arithmetic mean\n    return sum(scores) / len(scores)",
+    "expected_findings": [
+      "ZeroDivisionError",
+      "empty list",
+      "division by zero",
+      "edge case"
+    ]
+  },
+  {
+    "id": 10,
+    "title": "Clean Idiomatic OOP Code",
+    "code": "\"\"\"Data representation of a 2D Vector.\"\"\"\nfrom dataclasses import dataclass\nimport math\n\n@dataclass(frozen=True)\nclass Vector2D:\n    \"\"\"Represents a mathematical 2D coordinate vector.\"\"\"\n    x: float\n    y: float\n\n    def magnitude(self) -> float:\n        \"\"\"Calculate Euclidean length.\"\"\"\n        return math.hypot(self.x, self.y)",
+    "expected_findings": [
+      "No security issues detected",
+      "dataclass",
+      "type annotations",
+      "docstring"
+    ]
+  }
+]
