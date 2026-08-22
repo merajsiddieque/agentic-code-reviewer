@@ -1,43 +1,26 @@
 import React, { useEffect, useState } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import MetricCards from './components/MetricCards';
 import UploadCard from './components/UploadCard';
 import LoadingSpinner from './components/LoadingSpinner';
 import ReviewReport from './components/ReviewReport';
+import Evaluation from './pages/Evaluation';
 import Footer from './components/Footer';
 import { checkHealth, reviewCode } from './services/api';
 import { AlertTriangle, X } from 'lucide-react';
 
-export default function App() {
-  const [isConnected, setIsConnected] = useState(false);
-  const [isCheckingHealth, setIsCheckingHealth] = useState(false);
+function CodeReviewPage({ isConnected, isCheckingHealth, fetchHealth }) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileMetrics, setFileMetrics] = useState({ loc: null });
   const [isLoading, setIsLoading] = useState(false);
   const [reviewData, setReviewData] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const fetchHealth = async () => {
-    setIsCheckingHealth(true);
-    try {
-      await checkHealth();
-      setIsConnected(true);
-    } catch (err) {
-      setIsConnected(false);
-    } finally {
-      setIsCheckingHealth(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchHealth();
-  }, []);
-
   const handleFileSelect = async (file) => {
     setSelectedFile(file);
     setErrorMessage('');
-    
-    // Quick client-side line count
+
     try {
       const text = await file.text();
       const lines = text.split(/\r\n|\r|\n/).length;
@@ -72,15 +55,13 @@ export default function App() {
 
     try {
       const data = await reviewCode(selectedFile);
-      
-      // Parse markdown to extract issues count and score
+
       let issuesCount = 0;
       let overallScore = null;
       if (data && data.review) {
         const scoreMatch = data.review.match(/Overall Score:\s*([\d.]+)\s*\/\s*10/i);
         if (scoreMatch) overallScore = scoreMatch[1];
 
-        // Count severity tags or bullet items in security/bugs
         const highMatches = (data.review.match(/Severity[\s*:]+`?High`?/gi) || []).length;
         const medMatches = (data.review.match(/Severity[\s*:]+`?Medium`?/gi) || []).length;
         const lowMatches = (data.review.match(/Severity[\s*:]+`?Low`?/gi) || []).length;
@@ -96,10 +77,8 @@ export default function App() {
           total_lines: fileMetrics.loc,
         },
       });
-      setIsConnected(true);
     } catch (err) {
       if (!err.response) {
-        setIsConnected(false);
         setErrorMessage(
           'Unable to connect to the backend server. Please verify the FastAPI backend is running on port 8000.'
         );
@@ -115,16 +94,13 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white antialiased">
-      {/* Top Header */}
       <Header
         isConnected={isConnected}
         isChecking={isCheckingHealth}
         onRefreshHealth={fetchHealth}
       />
 
-      {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-        {/* Error Notification Banner */}
         {errorMessage && (
           <div className="mb-6 p-4 rounded-2xl bg-rose-950/80 border border-rose-800 shadow-lg flex items-start justify-between gap-3 text-rose-200 animate-fadeIn">
             <div className="flex items-start gap-3">
@@ -144,7 +120,6 @@ export default function App() {
           </div>
         )}
 
-        {/* Dashboard Metric Statistics Cards */}
         <MetricCards
           metrics={{
             loc: fileMetrics.loc,
@@ -156,7 +131,6 @@ export default function App() {
           isLoading={isLoading}
         />
 
-        {/* Upload Card Section */}
         <UploadCard
           selectedFile={selectedFile}
           onFileSelect={handleFileSelect}
@@ -166,10 +140,8 @@ export default function App() {
           disabled={!isConnected && !selectedFile}
         />
 
-        {/* Loading Spinner Section */}
         {isLoading && <LoadingSpinner />}
 
-        {/* Review Results Report */}
         {reviewData && !isLoading && (
           <ReviewReport
             filename={reviewData.filename}
@@ -181,8 +153,65 @@ export default function App() {
         )}
       </main>
 
-      {/* Footer */}
       <Footer />
     </div>
+  );
+}
+
+export default function App() {
+  const [isConnected, setIsConnected] = useState(false);
+  const [isCheckingHealth, setIsCheckingHealth] = useState(false);
+
+  const fetchHealth = async () => {
+    setIsCheckingHealth(true);
+    try {
+      await checkHealth();
+      setIsConnected(true);
+    } catch (err) {
+      setIsConnected(false);
+    } finally {
+      setIsCheckingHealth(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchHealth();
+  }, []);
+
+  return (
+    <Routes>
+      {/* Homepage: Pure Code Review Interface */}
+      <Route
+        path="/"
+        element={
+          <CodeReviewPage
+            isConnected={isConnected}
+            isCheckingHealth={isCheckingHealth}
+            fetchHealth={fetchHealth}
+          />
+        }
+      />
+
+      {/* Developer-only Benchmark Evaluation Route */}
+      <Route
+        path="/evaluation"
+        element={
+          <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white antialiased">
+            <Header
+              isConnected={isConnected}
+              isChecking={isCheckingHealth}
+              onRefreshHealth={fetchHealth}
+            />
+            <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+              <Evaluation />
+            </main>
+            <Footer />
+          </div>
+        }
+      />
+
+      {/* Fallback */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

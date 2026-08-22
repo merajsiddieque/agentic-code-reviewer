@@ -8,7 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, File, Query, UploadFile
+from fastapi import FastAPI, File, Query, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
@@ -151,6 +151,46 @@ async def review_stream_post(file: UploadFile = File(...)) -> StreamingResponse:
             "X-Accel-Buffering": "no",
         },
     )
+
+
+@app.get("/api/evaluation")
+@app.get("/evaluation")
+def get_evaluation(request: Request) -> Any:
+    """
+    Return the benchmark evaluation report. If requested via browser direct navigation (Accept: text/html),
+    serves the React SPA. If requested via API / JSON, returns the evaluation JSON data.
+    """
+    accept = request.headers.get("accept", "")
+    if "text/html" in accept and not request.url.path.startswith("/api/"):
+        index_file = FRONTEND_DIST_DIR / "index.html"
+        if index_file.exists():
+            return FileResponse(str(index_file))
+
+    eval_file = Path(__file__).parent.parent / "evaluation_report.json"
+    if not eval_file.exists():
+        eval_file = Path(__file__).parent / "evaluation_report.json"
+
+    if eval_file.exists():
+        try:
+            import json
+
+            return json.loads(eval_file.read_text(encoding="utf-8"))
+        except Exception:
+            pass
+
+    return {
+        "summary": {
+            "total_samples": 0,
+            "passed_samples": 0,
+            "failed_samples": 0,
+            "overall_precision": 0.0,
+            "overall_recall": 0.0,
+            "overall_f1": 0.0,
+            "overall_exact_match_rate": 0.0,
+        },
+        "per_example_scores": [],
+        "failed_cases": [],
+    }
 
 
 @app.get("/{full_path:path}")

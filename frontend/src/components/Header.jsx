@@ -4,14 +4,12 @@ import {
   Sparkles,
   RefreshCw,
   Github,
-  Terminal,
-  Activity,
 } from 'lucide-react';
 
 export default function Header({
-  isConnected,
-  isChecking,
-  onRefreshHealth,
+  isConnected = false,
+  isChecking = false,
+  onRefreshHealth = () => {},
 }) {
   return (
     <header className="bg-zinc-950 border-b border-zinc-800 text-zinc-100 sticky top-0 z-40 shadow-xl backdrop-blur-lg bg-zinc-950/90">
@@ -64,7 +62,7 @@ export default function Header({
                   }`}
                 />
               </span>
-              <span className="hidden md:inline font-mono">
+              <span className="hidden sm:inline font-mono">
                 {isConnected ? 'Backend Live' : 'Backend Offline'}
               </span>
             </div>
