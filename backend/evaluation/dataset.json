@@ -1,112 +1,247 @@
 [
   {
     "id": 1,
-    "title": "Hardcoded Password",
-    "code": "DB_USER = 'admin'\nDB_PASSWORD = 'SuperSecretPassword99!'\n\ndef connect_db():\n    return f'Connecting with {DB_USER}:{DB_PASSWORD}'",
+    "title": "SQL Injection in User Query",
+    "filename": "01_sql_injection_vulnerable.py",
+    "code": "import sqlite3\n\ndef get_user_profile(cursor: sqlite3.Cursor, user_id: str) -> list[tuple]:\n    # Vulnerable to SQL injection via user_id\n    query = f\"SELECT id, username, email, role FROM users WHERE id = '{user_id}' AND is_active = 1\"\n    cursor.execute(query)\n    return cursor.fetchall()\n\ndef delete_user_account(cursor: sqlite3.Cursor, username: str) -> None:\n    query = f\"DELETE FROM users WHERE username = '{username}'\"\n    cursor.executescript(query)",
     "expected_findings": [
-      "Hardcoded credential",
-      "High severity",
-      "DB_PASSWORD",
-      "environment variables"
+      "SQL Injection",
+      "cursor.execute",
+      "parameterized query",
+      "High severity"
+    ],
+    "unexpected_findings": [
+      "No security issues detected",
+      "pickle"
     ]
   },
   {
     "id": 2,
-    "title": "Dangerous eval() Usage",
-    "code": "def evaluate_expression(user_input: str):\n    # Evaluate arbitrary expression\n    result = eval(user_input)\n    return result",
+    "title": "Command Injection via shell=True",
+    "filename": "02_command_injection_unsafe.py",
+    "code": "import subprocess\n\ndef ping_server_ip(host_address: str) -> str:\n    command = f\"ping -c 1 {host_address}\"\n    output = subprocess.check_output(command, shell=True)\n    return output.decode('utf-8')\n\ndef check_disk_usage(directory_path: str) -> str:\n    cmd = f\"du -sh {directory_path}\"\n    return subprocess.getoutput(cmd)",
     "expected_findings": [
-      "eval",
-      "Remote Code Execution",
-      "High severity",
-      "literal_eval"
+      "shell=True",
+      "Command Injection",
+      "subprocess",
+      "High severity"
+    ],
+    "unexpected_findings": [
+      "No security issues detected",
+      "SQL Injection"
     ]
   },
   {
     "id": 3,
-    "title": "Command Injection Risk",
-    "code": "import subprocess\n\ndef ping_server(target_ip: str):\n    cmd = f'ping -c 1 {target_ip}'\n    return subprocess.check_output(cmd, shell=True)",
+    "title": "Hardcoded Production Secrets",
+    "filename": "03_hardcoded_secrets_exposed.py",
+    "code": "DATABASE_PASSWORD = 'SuperSecretDbPassword2026!'\nAWS_ACCESS_KEY_ID = 'AKIAIOSFODNN7EXAMPLE'\nAWS_SECRET_ACCESS_KEY = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'\nJWT_SIGNING_KEY = 'super-secret-jwt-signing-key-do-not-share'\n\ndef get_db_connection_string() -> str:\n    return f'postgresql://postgres:{DATABASE_PASSWORD}@prod-db.internal:5432/main_db'",
     "expected_findings": [
-      "shell=True",
-      "Command Injection",
+      "Hardcoded credential",
       "High severity",
-      "subprocess"
+      "DATABASE_PASSWORD",
+      "environment variables"
+    ],
+    "unexpected_findings": [
+      "eval",
+      "shell=True"
     ]
   },
   {
     "id": 4,
-    "title": "Insecure Deserialization",
-    "code": "import pickle\n\ndef deserialize_session(payload: bytes):\n    return pickle.loads(payload)",
+    "title": "Insecure Deserialization (pickle)",
+    "filename": "04_insecure_deserialization_pickle.py",
+    "code": "import pickle\nimport base64\n\ndef load_user_session_token(encoded_token: str) -> dict:\n    raw_payload = base64.b64decode(encoded_token)\n    session_data = pickle.loads(raw_payload)\n    return session_data\n\ndef restore_cached_state(file_path: str) -> object:\n    with open(file_path, 'rb') as f:\n        return pickle.load(f)",
     "expected_findings": [
       "pickle.loads",
       "Insecure Deserialization",
-      "High severity",
-      "arbitrary code execution"
+      "Remote Code Execution",
+      "High severity"
+    ],
+    "unexpected_findings": [
+      "SQL Injection",
+      "No security issues detected"
     ]
   },
   {
     "id": 5,
-    "title": "Dangerous exec() Usage",
-    "code": "def run_dynamic_code(script_text: str):\n    exec(script_text)\n    return True",
+    "title": "Dangerous eval() and exec() Usage",
+    "filename": "05_dangerous_eval_exec.py",
+    "code": "def calculate_dynamic_formula(user_formula_str: str) -> float:\n    result = eval(user_formula_str)\n    return float(result)\n\ndef run_custom_plugin(plugin_code: str) -> None:\n    exec(plugin_code)",
     "expected_findings": [
+      "eval",
       "exec",
-      "Dynamic code execution",
       "High severity",
-      "Remote Code Execution"
+      "literal_eval"
+    ],
+    "unexpected_findings": [
+      "pickle",
+      "No security issues detected"
     ]
   },
   {
     "id": 6,
-    "title": "SQL Injection Vulnerability",
-    "code": "import sqlite3\n\ndef get_user_record(cursor, user_id: str):\n    query = f'SELECT * FROM users WHERE id = {user_id}'\n    return cursor.execute(query).fetchall()",
+    "title": "Path Traversal Arbitrary File Access",
+    "filename": "06_path_traversal_unsafe.py",
+    "code": "import os\n\nUPLOAD_BASE_DIR = '/var/www/app/uploads'\n\ndef retrieve_user_uploaded_file(filename: str) -> bytes:\n    target_path = os.path.join(UPLOAD_BASE_DIR, filename)\n    with open(target_path, 'rb') as file_handle:\n        return file_handle.read()\n\ndef delete_attachment(filename: str) -> None:\n    full_path = f'{UPLOAD_BASE_DIR}/{filename}'\n    os.remove(full_path)",
     "expected_findings": [
-      "SQL Injection",
+      "Path Traversal",
+      "os.path.join",
       "High severity",
-      "parameterized query",
-      "placeholders"
+      "directory traversal"
+    ],
+    "unexpected_findings": [
+      "eval",
+      "SQL Injection"
     ]
   },
   {
     "id": 7,
-    "title": "Bare Exception and Resource Leak",
-    "code": "def read_log_file(filepath: str):\n    try:\n        f = open(filepath, 'r')\n        data = f.read()\n        return data\n    except:\n        return None",
+    "title": "Resource Leak & Bare Except Catching",
+    "filename": "07_resource_leak_unclosed_files.py",
+    "code": "def parse_system_log(file_path: str) -> list[str]:\n    f = open(file_path, 'r', encoding='utf-8')\n    lines = f.readlines()\n    try:\n        results = [line.strip() for line in lines if 'ERROR' in line]\n        return results\n    except:\n        return []",
     "expected_findings": [
       "bare except",
       "resource leak",
       "with statement",
-      "FileNotFoundError"
+      "file_path"
+    ],
+    "unexpected_findings": [
+      "Remote Code Execution",
+      "SQL Injection"
     ]
   },
   {
     "id": 8,
-    "title": "Mutable Default Argument and Unused Imports",
-    "code": "import os\nimport sys\nimport math\n\ndef append_item(item, target_list=[]):\n    target_list.append(item)\n    return target_list",
+    "title": "Mutable Default Arguments & Shadowing",
+    "filename": "08_mutable_defaults_and_shadowing.py",
+    "code": "import math\nimport os\nimport sys\n\ndef append_user_activity(event_name: str, activities_list: list = []) -> list:\n    activities_list.append(event_name)\n    return activities_list\n\ndef create_user_map(data: dict, id: int, list: list = None) -> dict:\n    data[id] = list or []\n    return data",
     "expected_findings": [
       "mutable default",
-      "target_list",
+      "activities_list",
       "unused import",
-      "None"
+      "shadowing"
+    ],
+    "unexpected_findings": [
+      "High severity",
+      "Command Injection"
     ]
   },
   {
     "id": 9,
-    "title": "Unhandled Zero Division Error",
-    "code": "def calculate_average(scores: list[float]) -> float:\n    # Calculates arithmetic mean\n    return sum(scores) / len(scores)",
+    "title": "Weak Cryptography MD5 & Insecure PRNG",
+    "filename": "09_weak_cryptography_md5.py",
+    "code": "import hashlib\nimport random\n\ndef hash_user_password(raw_password: str) -> str:\n    return hashlib.md5(raw_password.encode('utf-8')).hexdigest()\n\ndef generate_password_reset_token() -> str:\n    token_num = random.randint(100000, 999999)\n    return str(token_num)",
     "expected_findings": [
-      "ZeroDivisionError",
-      "empty list",
-      "division by zero",
-      "edge case"
+      "MD5",
+      "hashlib",
+      "random",
+      "secrets"
+    ],
+    "unexpected_findings": [
+      "SQL Injection",
+      "pickle"
     ]
   },
   {
     "id": 10,
-    "title": "Clean Idiomatic OOP Code",
-    "code": "\"\"\"Data representation of a 2D Vector.\"\"\"\nfrom dataclasses import dataclass\nimport math\n\n@dataclass(frozen=True)\nclass Vector2D:\n    \"\"\"Represents a mathematical 2D coordinate vector.\"\"\"\n    x: float\n    y: float\n\n    def magnitude(self) -> float:\n        \"\"\"Calculate Euclidean length.\"\"\"\n        return math.hypot(self.x, self.y)",
+    "title": "Unhandled ZeroDivisionError & Bounds",
+    "filename": "10_unhandled_zero_division.py",
+    "code": "def compute_student_average(grades: list[float]) -> float:\n    return sum(grades) / len(grades)\n\ndef get_latest_item(items: list[str]) -> str:\n    return items[-1]",
     "expected_findings": [
-      "No security issues detected",
+      "ZeroDivisionError",
+      "empty list",
+      "division by zero",
+      "IndexError"
+    ],
+    "unexpected_findings": [
+      "SQL Injection",
+      "High severity"
+    ]
+  },
+  {
+    "id": 11,
+    "title": "Clean Idiomatic Data Processing Pipeline",
+    "filename": "11_clean_data_processing.py",
+    "code": "from typing import Iterable, Sequence\n\nclass EmptyDatasetError(ValueError):\n    \"\"\"Raised when an empty sequence is passed.\"\"\"\n\ndef calculate_moving_average(values: Sequence[float], window_size: int) -> list[float]:\n    if not values:\n        raise EmptyDatasetError('Cannot compute moving average on an empty dataset.')\n    if window_size <= 0:\n        raise ValueError(f'window_size must be positive, got {window_size}')\n    averages: list[float] = []\n    current_window_sum = sum(values[:window_size])\n    averages.append(current_window_sum / window_size)\n    for i in range(window_size, len(values)):\n        current_window_sum += values[i] - values[i - window_size]\n        averages.append(current_window_sum / window_size)\n    return averages",
+    "expected_findings": [
+      "type annotations",
+      "docstring",
+      "custom exception",
+      "input validation"
+    ],
+    "unexpected_findings": [
+      "High severity",
+      "Command Injection",
+      "SQL Injection"
+    ]
+  },
+  {
+    "id": 12,
+    "title": "Clean Immutable OOP Vector Math",
+    "filename": "12_clean_oop_vector_math.py",
+    "code": "from __future__ import annotations\nfrom dataclasses import dataclass\nimport math\n\n@dataclass(frozen=True, slots=True)\nclass Vector2D:\n    \"\"\"Represents an immutable 2D Cartesian coordinate vector.\"\"\"\n    x: float\n    y: float\n\n    def magnitude(self) -> float:\n        return math.hypot(self.x, self.y)\n\n    def normalized(self) -> Vector2D:\n        mag = self.magnitude()\n        if mag == 0.0:\n            raise ZeroDivisionError('Cannot normalize a null vector.')\n        return Vector2D(self.x / mag, self.y / mag)",
+    "expected_findings": [
       "dataclass",
       "type annotations",
+      "immutability",
       "docstring"
+    ],
+    "unexpected_findings": [
+      "High severity",
+      "Remote Code Execution",
+      "hardcoded secret"
+    ]
+  },
+  {
+    "id": 13,
+    "title": "Clean Cryptographic Security Service",
+    "filename": "13_clean_secure_auth.py",
+    "code": "import hashlib\nimport hmac\nimport os\nimport secrets\nfrom typing import Optional\n\nclass SecurityAuthService:\n    def __init__(self, secret_key: Optional[bytes] = None) -> None:\n        self._secret_key = secret_key or os.environ.get('AUTH_SECRET_KEY', secrets.token_bytes(32))\n    def generate_secure_api_token(self, prefix: str = 'tok_') -> str:\n        return f'{prefix}{secrets.token_urlsafe(32)}'\n    def verify_signature(self, payload: bytes, signature_hex: str) -> bool:\n        expected_sig = hmac.new(self._secret_key, msg=payload, digestmod=hashlib.sha256).hexdigest()\n        return hmac.compare_digest(expected_sig, signature_hex)",
+    "expected_findings": [
+      "secrets",
+      "hmac.compare_digest",
+      "timing attack",
+      "type annotations"
+    ],
+    "unexpected_findings": [
+      "High severity",
+      "MD5",
+      "Insecure Deserialization"
+    ]
+  },
+  {
+    "id": 14,
+    "title": "Clean Asynchronous Task Runner",
+    "filename": "14_clean_async_fetcher.py",
+    "code": "import asyncio\nimport logging\nfrom typing import Any, Callable, Coroutine, Sequence\n\nlogger = logging.getLogger(__name__)\n\nasync def fetch_with_semaphore(semaphore: asyncio.Semaphore, worker_fn: Callable[[int], Coroutine[Any, Any, str]], item_id: int, timeout_seconds: float = 5.0) -> str:\n    async with semaphore:\n        try:\n            return await asyncio.wait_for(worker_fn(item_id), timeout=timeout_seconds)\n        except asyncio.TimeoutError:\n            return f'TIMEOUT: {item_id}'",
+    "expected_findings": [
+      "asyncio.Semaphore",
+      "asyncio.wait_for",
+      "timeout",
+      "type annotations"
+    ],
+    "unexpected_findings": [
+      "High severity",
+      "bare except",
+      "SQL Injection"
+    ]
+  },
+  {
+    "id": 15,
+    "title": "Clean Generic O(1) LRU Cache",
+    "filename": "15_clean_custom_lru_cache.py",
+    "code": "from __future__ import annotations\nfrom typing import Generic, Optional, TypeVar\n\nK = TypeVar('K')\nV = TypeVar('V')\n\nclass LRUCache(Generic[K, V]):\n    \"\"\"Least Recently Used (LRU) Cache supporting O(1) get and put operations.\"\"\"\n    def __init__(self, capacity: int) -> None:\n        if capacity <= 0:\n            raise ValueError('Capacity must be positive.')\n        self._capacity = capacity\n        self._map = {}",
+    "expected_findings": [
+      "Generic",
+      "TypeVar",
+      "LRUCache",
+      "docstring"
+    ],
+    "unexpected_findings": [
+      "High severity",
+      "Command Injection",
+      "pickle"
     ]
   }
 ]

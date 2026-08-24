@@ -57,23 +57,43 @@ export async function reviewCode(file) {
   }
 }
 
-/**
- * Fetch precomputed benchmark evaluation report.
- * @returns {Promise<{summary: object, per_example_scores: Array, failed_cases: Array}>}
- */
 export async function getEvaluationReport() {
+  const options = {
+    headers: {
+      Accept: 'application/json',
+    },
+    timeout: 7000,
+  };
+
   try {
-    const res = await axios.get('/evaluation', { timeout: 5000 });
-    return res.data;
-  } catch (e1) {
-    try {
-      const res = await axios.get('http://127.0.0.1:8000/evaluation', { timeout: 5000 });
-      return res.data;
-    } catch (e2) {
-      const res = await axios.get('http://localhost:8000/evaluation', { timeout: 5000 });
-      return res.data;
-    }
+    const res = await axios.get('/api/evaluation', options);
+    if (res.data && typeof res.data === 'object') return res.data;
+  } catch (e0) {
+    // Continue to fallback endpoints
   }
+
+  try {
+    const res = await axios.get('/evaluation', options);
+    if (res.data && typeof res.data === 'object') return res.data;
+  } catch (e1) {
+    // Continue
+  }
+
+  try {
+    const res = await axios.get('http://127.0.0.1:8000/api/evaluation', options);
+    if (res.data && typeof res.data === 'object') return res.data;
+  } catch (e2) {
+    // Continue
+  }
+
+  try {
+    const res = await axios.get('http://localhost:8000/api/evaluation', options);
+    if (res.data && typeof res.data === 'object') return res.data;
+  } catch (e3) {
+    // Continue
+  }
+
+  throw new Error('Failed to fetch evaluation report from backend.');
 }
 
 export default {

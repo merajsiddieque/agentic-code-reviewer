@@ -189,13 +189,24 @@ def load_code_node(state: ReviewState) -> ReviewState:
 
 def router_node(state: ReviewState) -> ReviewState:
     """
-    Analyzes filename and snippet using Gemini to select the optimal pipeline route:
-    'security', 'structure', or 'full'.
+    Analyzes filename and snippet using heuristics and Gemini fallback to select the optimal
+    pipeline route: 'security', 'structure', or 'full'.
     """
-    filename = state.get("filename", "code.py")
+    filename = state.get("filename", "code.py").lower()
     code = state.get("code", "")
-    snippet = "\n".join(code.splitlines()[:40])
+    
+    # 1. Fast heuristic routing to conserve API quota
+    sec_indicators = ["sec", "auth", "vuln", "inject", "token", "pass", "cred", "crypto", "eval", "pickle"]
+    struct_indicators = ["struct", "oop", "model", "class", "schema", "type", "math", "util", "data"]
+    
+    if any(k in filename for k in sec_indicators):
+        state["route"] = "security"
+        return state
+    if any(k in filename for k in struct_indicators) and not any(k in filename for k in sec_indicators):
+        state["route"] = "structure"
+        return state
 
+    snippet = "\n".join(code.splitlines()[:40])
     prompt = f"""Filename: {filename}
 
 Code Snippet (First 40 lines):
@@ -210,8 +221,8 @@ Code Snippet (First 40 lines):
 
     content = invoke_with_retry(
         messages=messages,
-        max_retries=2,
-        initial_delay=2.0,
+        max_retries=1,
+        initial_delay=1.0,
         fallback_text="full",
     )
 

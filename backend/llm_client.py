@@ -36,8 +36,8 @@ def _extract_response_text(response: Any) -> str:
 
 def invoke_with_retry(
     messages: list[Any],
-    max_retries: int = 3,
-    initial_delay: float = 3.0,
+    max_retries: int = 4,
+    initial_delay: float = 2.0,
     fallback_text: str | None = None,
 ) -> str:
     """

@@ -1,26 +1,399 @@
 {
   "summary": {
-    "total_samples": 1,
-    "passed_samples": 1,
-    "failed_samples": 0,
-    "overall_precision": 1.0,
-    "overall_recall": 1.0,
-    "overall_f1": 1.0,
-    "overall_exact_match_rate": 1.0
+    "total_samples": 15,
+    "passed_samples": 6,
+    "failed_samples": 9,
+    "overall_precision": 0.8033,
+    "overall_recall": 0.7,
+    "overall_f1": 0.7346,
+    "overall_exact_match_rate": 0.4
   },
   "per_example_scores": [
     {
       "id": 1,
-      "title": "Hardcoded Password",
+      "title": "SQL Injection in User Query",
+      "filename": "01_sql_injection_vulnerable.py",
       "precision": 1.0,
       "recall": 1.0,
       "f1_score": 1.0,
       "exact_match": 1.0,
       "matched_findings": [
-        "Hardcoded credential"
+        "SQL Injection",
+        "cursor.execute",
+        "parameterized query",
+        "High severity"
       ],
-      "missing_findings": []
+      "missing_findings": [],
+      "false_positives": []
+    },
+    {
+      "id": 2,
+      "title": "Command Injection via shell=True",
+      "filename": "02_command_injection_unsafe.py",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "exact_match": 1.0,
+      "matched_findings": [
+        "shell=True",
+        "Command Injection",
+        "subprocess",
+        "High severity"
+      ],
+      "missing_findings": [],
+      "false_positives": []
+    },
+    {
+      "id": 3,
+      "title": "Hardcoded Production Secrets",
+      "filename": "03_hardcoded_secrets_exposed.py",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "exact_match": 1.0,
+      "matched_findings": [
+        "Hardcoded credential",
+        "High severity",
+        "DATABASE_PASSWORD",
+        "environment variables"
+      ],
+      "missing_findings": [],
+      "false_positives": []
+    },
+    {
+      "id": 4,
+      "title": "Insecure Deserialization (pickle)",
+      "filename": "04_insecure_deserialization_pickle.py",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "exact_match": 1.0,
+      "matched_findings": [
+        "pickle.loads",
+        "Insecure Deserialization",
+        "Remote Code Execution",
+        "High severity"
+      ],
+      "missing_findings": [],
+      "false_positives": []
+    },
+    {
+      "id": 5,
+      "title": "Dangerous eval() and exec() Usage",
+      "filename": "05_dangerous_eval_exec.py",
+      "precision": 0.75,
+      "recall": 0.75,
+      "f1_score": 0.75,
+      "exact_match": 0.0,
+      "matched_findings": [
+        "eval",
+        "exec",
+        "High severity"
+      ],
+      "missing_findings": [
+        "literal_eval"
+      ],
+      "false_positives": [
+        "No security issues detected"
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Path Traversal Arbitrary File Access",
+      "filename": "06_path_traversal_unsafe.py",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "exact_match": 1.0,
+      "matched_findings": [
+        "Path Traversal",
+        "os.path.join",
+        "High severity",
+        "directory traversal"
+      ],
+      "missing_findings": [],
+      "false_positives": []
+    },
+    {
+      "id": 7,
+      "title": "Resource Leak & Bare Except Catching",
+      "filename": "07_resource_leak_unclosed_files.py",
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0,
+      "exact_match": 1.0,
+      "matched_findings": [
+        "bare except",
+        "resource leak",
+        "with statement",
+        "file_path"
+      ],
+      "missing_findings": [],
+      "false_positives": []
+    },
+    {
+      "id": 8,
+      "title": "Mutable Default Arguments & Shadowing",
+      "filename": "08_mutable_defaults_and_shadowing.py",
+      "precision": 0.8,
+      "recall": 1.0,
+      "f1_score": 0.8889,
+      "exact_match": 0.0,
+      "matched_findings": [
+        "mutable default",
+        "activities_list",
+        "unused import",
+        "shadowing"
+      ],
+      "missing_findings": [],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Weak Cryptography MD5 & Insecure PRNG",
+      "filename": "09_weak_cryptography_md5.py",
+      "precision": 0.5,
+      "recall": 0.25,
+      "f1_score": 0.3333,
+      "exact_match": 0.0,
+      "matched_findings": [
+        "hashlib"
+      ],
+      "missing_findings": [
+        "MD5",
+        "random",
+        "secrets"
+      ],
+      "false_positives": [
+        "pickle"
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Unhandled ZeroDivisionError & Bounds",
+      "filename": "10_unhandled_zero_division.py",
+      "precision": 0.5,
+      "recall": 0.25,
+      "f1_score": 0.3333,
+      "exact_match": 0.0,
+      "matched_findings": [
+        "empty list"
+      ],
+      "missing_findings": [
+        "ZeroDivisionError",
+        "division by zero",
+        "IndexError"
+      ],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Clean Idiomatic Data Processing Pipeline",
+      "filename": "11_clean_data_processing.py",
+      "precision": 0.6667,
+      "recall": 0.5,
+      "f1_score": 0.5714,
+      "exact_match": 0.0,
+      "matched_findings": [
+        "type annotations",
+        "docstring"
+      ],
+      "missing_findings": [
+        "custom exception",
+        "input validation"
+      ],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Clean Immutable OOP Vector Math",
+      "filename": "12_clean_oop_vector_math.py",
+      "precision": 0.6667,
+      "recall": 0.5,
+      "f1_score": 0.5714,
+      "exact_match": 0.0,
+      "matched_findings": [
+        "type annotations",
+        "docstring"
+      ],
+      "missing_findings": [
+        "dataclass",
+        "immutability"
+      ],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 13,
+      "title": "Clean Cryptographic Security Service",
+      "filename": "13_clean_secure_auth.py",
+      "precision": 0.6667,
+      "recall": 0.5,
+      "f1_score": 0.5714,
+      "exact_match": 0.0,
+      "matched_findings": [
+        "secrets",
+        "type annotations"
+      ],
+      "missing_findings": [
+        "hmac.compare_digest",
+        "timing attack"
+      ],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 14,
+      "title": "Clean Asynchronous Task Runner",
+      "filename": "14_clean_async_fetcher.py",
+      "precision": 0.5,
+      "recall": 0.25,
+      "f1_score": 0.3333,
+      "exact_match": 0.0,
+      "matched_findings": [
+        "type annotations"
+      ],
+      "missing_findings": [
+        "asyncio.Semaphore",
+        "asyncio.wait_for",
+        "timeout"
+      ],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 15,
+      "title": "Clean Generic O(1) LRU Cache",
+      "filename": "15_clean_custom_lru_cache.py",
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1_score": 0.6667,
+      "exact_match": 0.0,
+      "matched_findings": [
+        "Generic",
+        "docstring"
+      ],
+      "missing_findings": [
+        "TypeVar",
+        "LRUCache"
+      ],
+      "false_positives": []
     }
   ],
-  "failed_cases": []
+  "failed_cases": [
+    {
+      "id": 5,
+      "title": "Dangerous eval() and exec() Usage",
+      "filename": "05_dangerous_eval_exec.py",
+      "missing_findings": [
+        "literal_eval"
+      ],
+      "false_positives": [
+        "No security issues detected"
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Mutable Default Arguments & Shadowing",
+      "filename": "08_mutable_defaults_and_shadowing.py",
+      "missing_findings": [],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 9,
+      "title": "Weak Cryptography MD5 & Insecure PRNG",
+      "filename": "09_weak_cryptography_md5.py",
+      "missing_findings": [
+        "MD5",
+        "random",
+        "secrets"
+      ],
+      "false_positives": [
+        "pickle"
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Unhandled ZeroDivisionError & Bounds",
+      "filename": "10_unhandled_zero_division.py",
+      "missing_findings": [
+        "ZeroDivisionError",
+        "division by zero",
+        "IndexError"
+      ],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Clean Idiomatic Data Processing Pipeline",
+      "filename": "11_clean_data_processing.py",
+      "missing_findings": [
+        "custom exception",
+        "input validation"
+      ],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 12,
+      "title": "Clean Immutable OOP Vector Math",
+      "filename": "12_clean_oop_vector_math.py",
+      "missing_findings": [
+        "dataclass",
+        "immutability"
+      ],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 13,
+      "title": "Clean Cryptographic Security Service",
+      "filename": "13_clean_secure_auth.py",
+      "missing_findings": [
+        "hmac.compare_digest",
+        "timing attack"
+      ],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 14,
+      "title": "Clean Asynchronous Task Runner",
+      "filename": "14_clean_async_fetcher.py",
+      "missing_findings": [
+        "asyncio.Semaphore",
+        "asyncio.wait_for",
+        "timeout"
+      ],
+      "false_positives": [
+        "High severity"
+      ]
+    },
+    {
+      "id": 15,
+      "title": "Clean Generic O(1) LRU Cache",
+      "filename": "15_clean_custom_lru_cache.py",
+      "missing_findings": [
+        "TypeVar",
+        "LRUCache"
+      ],
+      "false_positives": []
+    }
+  ]
 }

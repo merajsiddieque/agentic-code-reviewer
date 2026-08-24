@@ -53,7 +53,8 @@ def run_evaluation(
         title = item.get("title", f"Sample #{test_id}")
         code = item.get("code", "")
         expected = item.get("expected_findings", [])
-        mock_filename = f"{title.lower().replace(' ', '_')}.py"
+        unexpected = item.get("unexpected_findings", [])
+        mock_filename = item.get("filename", f"{title.lower().replace(' ', '_')}.py")
 
         print(f"[{index}/{len(dataset)}] Evaluating #{test_id}: {title}...")
 
@@ -61,13 +62,19 @@ def run_evaluation(
         review_output = review_code(code=code, filename=mock_filename)
 
         # 2. Evaluate metrics
-        metrics = calculate_sample_metrics(expected_findings=expected, review_text=review_output)
+        metrics = calculate_sample_metrics(
+            expected_findings=expected,
+            review_text=review_output,
+            unexpected_findings=unexpected,
+        )
 
         eval_results.append({
             "id": test_id,
             "title": title,
+            "filename": mock_filename,
             "code": code,
             "expected_findings": expected,
+            "unexpected_findings": unexpected,
             "review_output": review_output,
             "metrics": metrics,
         })

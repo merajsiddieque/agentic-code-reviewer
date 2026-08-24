@@ -24,29 +24,29 @@ export default function BenchmarkTable({ examples = [] }) {
 
   if (!examples || examples.length === 0) {
     return (
-      <div className="rounded-2xl bg-zinc-900/90 border border-zinc-800 p-8 text-center text-zinc-400">
+      <div className="rounded-2xl bg-[#111827] border border-[#1F2937] p-8 text-center text-zinc-400">
         No per-example benchmark data available.
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl bg-zinc-900/90 border border-zinc-800 shadow-xl backdrop-blur-md overflow-hidden mb-8">
-      <div className="p-5 sm:p-6 border-b border-zinc-800 flex items-center justify-between">
+    <div className="rounded-2xl bg-[#111827] border border-[#1F2937] shadow-xl backdrop-blur-md overflow-hidden mb-8">
+      <div className="p-5 sm:p-6 border-b border-[#1F2937] flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <TableProperties className="w-5 h-5 text-indigo-400" />
           <h3 className="text-base sm:text-lg font-bold text-zinc-100">
             Benchmark Test Cases
           </h3>
         </div>
-        <span className="text-xs font-mono text-zinc-400 bg-zinc-800 px-3 py-1 rounded-full border border-zinc-700">
+        <span className="text-xs font-mono text-zinc-400 bg-[#0B1120] px-3 py-1 rounded-full border border-[#1F2937]">
           {examples.length} Cases Evaluated
         </span>
       </div>
 
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-zinc-800 text-left text-sm">
-          <thead className="bg-zinc-950/80 text-zinc-400 font-mono text-xs uppercase tracking-wider">
+        <table className="min-w-full divide-y divide-[#1F2937] text-left text-sm">
+          <thead className="bg-[#0B1120] text-zinc-400 font-mono text-xs uppercase tracking-wider">
             <tr>
               <th className="px-5 py-3.5">ID</th>
               <th className="px-5 py-3.5">Benchmark</th>
@@ -57,7 +57,7 @@ export default function BenchmarkTable({ examples = [] }) {
               <th className="px-5 py-3.5 text-right">Details</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-zinc-800/60 bg-zinc-900/40 font-mono text-xs">
+          <tbody className="divide-y divide-[#1F2937]/60 bg-[#111827]/40 font-mono text-xs">
             {examples.map((item) => {
               const isPassed = (item.exact_match === 1.0 || item.f1_score >= 0.8);
               const isExpanded = expandedId === item.id;
@@ -66,13 +66,19 @@ export default function BenchmarkTable({ examples = [] }) {
                 <React.Fragment key={item.id}>
                   <tr
                     onClick={() => toggleExpand(item.id)}
-                    className="hover:bg-zinc-800/40 cursor-pointer transition-colors"
+                    className="hover:bg-[#1E293B]/50 cursor-pointer transition-colors"
                   >
                     <td className="px-5 py-4 font-semibold text-zinc-300">
                       #{item.id}
                     </td>
                     <td className="px-5 py-4 font-sans font-medium text-zinc-100 text-sm">
-                      {item.title}
+                      <div>{item.title}</div>
+                      {item.filename && (
+                        <div className="text-[11px] text-zinc-400 font-mono flex items-center gap-1 mt-0.5">
+                          <FileCode className="w-3 h-3 text-indigo-400 inline" />
+                          <span>{item.filename}</span>
+                        </div>
+                      )}
                     </td>
                     <td className="px-5 py-4 text-indigo-300 font-bold">
                       {formatScore(item.precision)}
@@ -85,12 +91,12 @@ export default function BenchmarkTable({ examples = [] }) {
                     </td>
                     <td className="px-5 py-4">
                       {isPassed ? (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           Passed
                         </span>
                       ) : (
-                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/30">
                           <XCircle className="w-3.5 h-3.5" />
                           Failed
                         </span>
@@ -99,7 +105,7 @@ export default function BenchmarkTable({ examples = [] }) {
                     <td className="px-5 py-4 text-right">
                       <button
                         type="button"
-                        className="p-1 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition"
+                        className="p-1 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-[#1E293B] transition"
                       >
                         {isExpanded ? (
                           <ChevronUp className="w-4 h-4" />
@@ -112,9 +118,9 @@ export default function BenchmarkTable({ examples = [] }) {
 
                   {/* Expanded Findings Details */}
                   {isExpanded && (
-                    <tr className="bg-zinc-950/70">
+                    <tr className="bg-[#0B1120]/70">
                       <td colSpan={7} className="p-5">
-                        <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 space-y-4 font-sans text-xs">
+                        <div className="rounded-xl border border-[#1F2937] bg-[#0B1120] p-4 space-y-4 font-sans text-xs">
                           {/* Matched Findings */}
                           <div>
                             <span className="font-semibold text-zinc-300 flex items-center gap-1.5 mb-2">
@@ -126,7 +132,7 @@ export default function BenchmarkTable({ examples = [] }) {
                                 {item.matched_findings.map((f, i) => (
                                   <span
                                     key={i}
-                                    className="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/20 font-mono"
+                                    className="px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-300 border border-emerald-500/30 font-mono"
                                   >
                                     {f}
                                   </span>
@@ -148,7 +154,7 @@ export default function BenchmarkTable({ examples = [] }) {
                                 {item.missing_findings.map((f, i) => (
                                   <span
                                     key={i}
-                                    className="px-2.5 py-1 rounded-md bg-rose-500/10 text-rose-300 border border-rose-500/20 font-mono"
+                                    className="px-2.5 py-1 rounded-md bg-rose-500/10 text-rose-300 border border-rose-500/30 font-mono"
                                   >
                                     {f}
                                   </span>
@@ -158,6 +164,26 @@ export default function BenchmarkTable({ examples = [] }) {
                               <span className="text-emerald-400 font-medium">None (100% matched)</span>
                             )}
                           </div>
+
+                          {/* False Positives if any */}
+                          {item.false_positives && item.false_positives.length > 0 && (
+                            <div>
+                              <span className="font-semibold text-zinc-300 flex items-center gap-1.5 mb-2">
+                                <AlertCircle className="w-3.5 h-3.5 text-amber-400" />
+                                False Positives Triggered ({item.false_positives.length}):
+                              </span>
+                              <div className="flex flex-wrap gap-2">
+                                {item.false_positives.map((fp, i) => (
+                                  <span
+                                    key={i}
+                                    className="px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-300 border border-amber-500/30 font-mono"
+                                  >
+                                    {fp}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </td>
                     </tr>

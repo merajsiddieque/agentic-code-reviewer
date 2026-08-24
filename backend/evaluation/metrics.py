@@ -35,56 +35,69 @@ def _is_finding_present(finding: str, normalized_review: str) -> bool:
     return False
 
 
-def calculate_sample_metrics(expected_findings: list[str], review_text: str) -> dict[str, Any]:
+def calculate_sample_metrics(
+    expected_findings: list[str],
+    review_text: str,
+    unexpected_findings: list[str] | None = None,
+) -> dict[str, Any]:
     """
-    Calculate precision, recall, F1, and exact match for a single review against expected findings.
+    Calculate precision, recall, F1, and exact match for a single review against expected
+    and unexpected findings.
 
     Args:
         expected_findings: List of strings/concepts expected in the review.
         review_text: The generated review Markdown from the agent.
+        unexpected_findings: Optional list of concepts that should NOT appear (distractors / false positives).
 
     Returns:
-        Dictionary with tp, fn, precision, recall, f1, exact_match, matched, and missing lists.
+        Dictionary with tp, fp, fn, precision, recall, f1, exact_match, matched, and missing lists.
     """
-    if not expected_findings:
-        return {
-            "tp": 0,
-            "fn": 0,
-            "precision": 1.0,
-            "recall": 1.0,
-            "f1_score": 1.0,
-            "exact_match": 1.0,
-            "matched_findings": [],
-            "missing_findings": [],
-        }
-
     normalized_review = _normalize_text(review_text)
     matched: list[str] = []
     missing: list[str] = []
+    false_positives: list[str] = []
 
+    # 1. Evaluate True Positives and False Negatives against Expected Findings
     for finding in expected_findings:
         if _is_finding_present(finding, normalized_review):
             matched.append(finding)
         else:
             missing.append(finding)
 
+    # 2. Evaluate False Positives against Unexpected Findings (if provided)
+    if unexpected_findings:
+        for unwanted in unexpected_findings:
+            if _is_finding_present(unwanted, normalized_review):
+                false_positives.append(unwanted)
+
     tp = len(matched)
     fn = len(missing)
+    fp = len(false_positives)
     total_expected = len(expected_findings)
 
-    recall = tp / total_expected if total_expected > 0 else 0.0
-    # Precision is the proportion of expected findings that were verified in the review
-    precision = tp / max(tp, 1) if tp > 0 else (1.0 if total_expected == 0 else 0.0)
-    
+    # Recall: Proportion of actual expected findings that were identified
+    if total_expected > 0:
+        recall = tp / total_expected
+    else:
+        recall = 1.0 if fn == 0 else 0.0
+
+    # Precision: Proportion of detected findings that were relevant (TP / (TP + FP))
+    if (tp + fp) > 0:
+        precision = tp / (tp + fp)
+    else:
+        precision = 1.0 if (total_expected == 0 and fp == 0) else 0.0
+
+    # F1 Score: Harmonic mean of precision and recall
     if (precision + recall) > 0:
         f1 = 2 * (precision * recall) / (precision + recall)
     else:
         f1 = 0.0
 
-    exact_match = 1.0 if fn == 0 else 0.0
+    exact_match = 1.0 if (fn == 0 and fp == 0) else 0.0
 
     return {
         "tp": tp,
+        "fp": fp,
         "fn": fn,
         "precision": round(precision, 4),
         "recall": round(recall, 4),
@@ -92,6 +105,7 @@ def calculate_sample_metrics(expected_findings: list[str], review_text: str) -> 
         "exact_match": exact_match,
         "matched_findings": matched,
         "missing_findings": missing,
+        "false_positives": false_positives,
     }
 
 
@@ -125,3 +139,4 @@ def calculate_aggregate_metrics(sample_results: list[dict[str, Any]]) -> dict[st
         "overall_f1": round(mean_f1, 4),
         "overall_exact_match_rate": round(mean_exact_match, 4),
     }
+

@@ -5,7 +5,6 @@ import {
   Award,
   CheckCircle2,
   XCircle,
-  FileCheck,
   Layers,
 } from 'lucide-react';
 
@@ -25,7 +24,7 @@ export default function EvalSummaryCards({ summary = {} }) {
       value: formatPercent(summary.overall_precision),
       subtitle: 'True findings / Total flagged',
       icon: Target,
-      badgeColor: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+      badgeColor: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30',
       glow: 'from-indigo-500/20 to-transparent',
     },
     {
@@ -33,7 +32,7 @@ export default function EvalSummaryCards({ summary = {} }) {
       value: formatPercent(summary.overall_recall),
       subtitle: 'True findings / Ground truth',
       icon: Zap,
-      badgeColor: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
+      badgeColor: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30',
       glow: 'from-cyan-500/20 to-transparent',
     },
     {
@@ -41,7 +40,7 @@ export default function EvalSummaryCards({ summary = {} }) {
       value: formatPercent(summary.overall_f1),
       subtitle: 'Harmonic mean of P & R',
       icon: Award,
-      badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+      badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
       glow: 'from-emerald-500/20 to-transparent',
     },
     {
@@ -49,7 +48,7 @@ export default function EvalSummaryCards({ summary = {} }) {
       value: formatPercent(summary.overall_exact_match_rate),
       subtitle: '100% strict match across set',
       icon: CheckCircle2,
-      badgeColor: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+      badgeColor: 'bg-purple-500/10 text-purple-400 border-purple-500/30',
       glow: 'from-purple-500/20 to-transparent',
     },
   ];
@@ -60,7 +59,7 @@ export default function EvalSummaryCards({ summary = {} }) {
       value: totalSamples,
       subtitle: 'Ground truth test suite size',
       icon: Layers,
-      badgeColor: 'bg-zinc-800 text-zinc-300 border-zinc-700',
+      badgeColor: 'bg-[#0B1120] text-zinc-300 border-[#1F2937]',
       glow: 'from-zinc-700/20 to-transparent',
     },
     {
@@ -68,7 +67,7 @@ export default function EvalSummaryCards({ summary = {} }) {
       value: passedSamples,
       subtitle: 'Met benchmark threshold',
       icon: CheckCircle2,
-      badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+      badgeColor: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30',
       glow: 'from-emerald-500/20 to-transparent',
     },
     {
@@ -77,8 +76,8 @@ export default function EvalSummaryCards({ summary = {} }) {
       subtitle: 'Requiring prompt/agent refinement',
       icon: XCircle,
       badgeColor: failedSamples > 0 
-        ? 'bg-rose-500/10 text-rose-400 border-rose-500/20' 
-        : 'bg-zinc-800 text-zinc-400 border-zinc-700',
+        ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' 
+        : 'bg-[#0B1120] text-zinc-400 border-[#1F2937]',
       glow: failedSamples > 0 ? 'from-rose-500/20 to-transparent' : 'from-zinc-700/20 to-transparent',
     },
   ];
@@ -92,7 +91,7 @@ export default function EvalSummaryCards({ summary = {} }) {
           return (
             <div
               key={idx}
-              className="relative overflow-hidden rounded-2xl bg-zinc-900/90 border border-zinc-800 p-5 shadow-lg backdrop-blur transition-all duration-300 hover:border-zinc-700 group"
+              className="relative overflow-hidden rounded-2xl bg-[#111827] border border-[#1F2937] p-5 shadow-xl backdrop-blur transition-all duration-300 hover:border-zinc-700 group"
             >
               <div
                 className={`absolute top-0 right-0 -mr-8 -mt-8 w-24 h-24 rounded-full bg-gradient-to-br ${card.glow} blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500`}
@@ -125,7 +124,7 @@ export default function EvalSummaryCards({ summary = {} }) {
           return (
             <div
               key={idx}
-              className="relative overflow-hidden rounded-2xl bg-zinc-900/90 border border-zinc-800 p-5 shadow-lg backdrop-blur transition-all duration-300 hover:border-zinc-700 hover:shadow-indigo-500/5 group"
+              className="relative overflow-hidden rounded-2xl bg-[#111827] border border-[#1F2937] p-5 shadow-xl backdrop-blur transition-all duration-300 hover:border-zinc-700 hover:shadow-indigo-500/5 group"
             >
               <div
                 className={`absolute top-0 right-0 -mr-8 -mt-8 w-24 h-24 rounded-full bg-gradient-to-br ${card.glow} blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500`}
@@ -153,3 +152,4 @@ export default function EvalSummaryCards({ summary = {} }) {
     </div>
   );
 }
+

@@ -27,10 +27,12 @@ def save_and_display_report(
         {
             "id": r["id"],
             "title": r["title"],
-            "missing_findings": r["metrics"]["missing_findings"],
+            "filename": r.get("filename", ""),
+            "missing_findings": r["metrics"].get("missing_findings", []),
+            "false_positives": r["metrics"].get("false_positives", []),
         }
         for r in eval_results
-        if r["metrics"]["fn"] > 0
+        if r["metrics"].get("fn", 0) > 0 or r["metrics"].get("fp", 0) > 0
     ]
 
     report_payload = {
@@ -44,12 +46,14 @@ def save_and_display_report(
             {
                 "id": r["id"],
                 "title": r["title"],
+                "filename": r.get("filename", ""),
                 "precision": r["metrics"]["precision"],
                 "recall": r["metrics"]["recall"],
                 "f1_score": r["metrics"]["f1_score"],
                 "exact_match": r["metrics"]["exact_match"],
-                "matched_findings": r["metrics"]["matched_findings"],
-                "missing_findings": r["metrics"]["missing_findings"],
+                "matched_findings": r["metrics"].get("matched_findings", []),
+                "missing_findings": r["metrics"].get("missing_findings", []),
+                "false_positives": r["metrics"].get("false_positives", []),
             }
             for r in eval_results
         ],

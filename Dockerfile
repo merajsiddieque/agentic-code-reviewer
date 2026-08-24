@@ -26,8 +26,9 @@ ENV PYTHONUNBUFFERED=1
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy backend
+# Copy backend and evaluation report
 COPY backend ./backend
+COPY evaluation_report.json* ./
 
 # Copy React build
 COPY --from=frontend-builder /app/frontend/dist ./frontend/dist

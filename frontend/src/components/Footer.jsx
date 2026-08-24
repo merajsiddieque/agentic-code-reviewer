@@ -1,14 +1,14 @@
 import React from 'react';
-import { ShieldCheck, Github, Linkedin, Terminal, Sparkles } from 'lucide-react';
+import { ShieldCheck, Github, Linkedin } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="border-t border-zinc-800/80 bg-zinc-950/90 text-zinc-400 py-8 mt-16 backdrop-blur">
+    <footer className="border-t border-[#1F2937] bg-[#0B1120]/90 text-zinc-400 py-8 mt-16 backdrop-blur">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           {/* Brand & Project Info */}
           <div className="flex items-center space-x-2.5">
-            <div className="w-7 h-7 rounded-lg bg-zinc-900 border border-zinc-700/80 flex items-center justify-center text-indigo-400">
+            <div className="w-7 h-7 rounded-lg bg-[#111827] border border-[#1F2937] flex items-center justify-center text-indigo-400">
               <ShieldCheck className="w-4 h-4" />
             </div>
             <span className="text-sm font-semibold text-zinc-200">
@@ -42,8 +42,8 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Tech Stack */}
-        <div className="mt-6 pt-6 border-t border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-zinc-500">
+        {/* Tech Stack & Copyright */}
+        <div className="mt-6 pt-6 border-t border-[#1F2937] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-zinc-500">
           <div>
             Powered by <span className="text-zinc-300 font-medium">LangGraph • FastAPI • React • Gemini 3.6 Flash</span>
           </div>
@@ -54,4 +54,4 @@ export default function Footer() {
       </div>
     </footer>
   );
-}
+}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Header from './components/Header';
 import MetricCards from './components/MetricCards';
+import PipelineVisualizer from './components/PipelineVisualizer';
 import UploadCard from './components/UploadCard';
 import LoadingSpinner from './components/LoadingSpinner';
 import ReviewReport from './components/ReviewReport';
@@ -93,7 +94,7 @@ function CodeReviewPage({ isConnected, isCheckingHealth, fetchHealth }) {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white antialiased">
+    <div className="min-h-screen bg-[#0B1120] text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white antialiased bg-radial-gradient">
       <Header
         isConnected={isConnected}
         isChecking={isCheckingHealth}
@@ -120,6 +121,7 @@ function CodeReviewPage({ isConnected, isCheckingHealth, fetchHealth }) {
           </div>
         )}
 
+        {/* Hero Dashboard Metrics */}
         <MetricCards
           metrics={{
             loc: fileMetrics.loc,
@@ -131,6 +133,14 @@ function CodeReviewPage({ isConnected, isCheckingHealth, fetchHealth }) {
           isLoading={isLoading}
         />
 
+        {/* LangGraph Horizontal Pipeline Visualizer */}
+        <PipelineVisualizer
+          selectedFile={selectedFile}
+          reviewData={reviewData}
+          isLoading={isLoading}
+        />
+
+        {/* Upload Section */}
         <UploadCard
           selectedFile={selectedFile}
           onFileSelect={handleFileSelect}
@@ -140,8 +150,10 @@ function CodeReviewPage({ isConnected, isCheckingHealth, fetchHealth }) {
           disabled={!isConnected && !selectedFile}
         />
 
+        {/* Execution Loading Pipeline */}
         {isLoading && <LoadingSpinner />}
 
+        {/* Review Output Dashboard & Markdown Viewer */}
         {reviewData && !isLoading && (
           <ReviewReport
             filename={reviewData.filename}
@@ -180,7 +192,7 @@ export default function App() {
 
   return (
     <Routes>
-      {/* Homepage: Pure Code Review Interface */}
+      {/* Homepage: Code Review Platform */}
       <Route
         path="/"
         element={
@@ -192,11 +204,11 @@ export default function App() {
         }
       />
 
-      {/* Developer-only Benchmark Evaluation Route */}
+      {/* Developer-only Benchmark Evaluation Route (Hidden at /evaluation) */}
       <Route
         path="/evaluation"
         element={
-          <div className="min-h-screen bg-zinc-950 text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white antialiased">
+          <div className="min-h-screen bg-[#0B1120] text-zinc-100 flex flex-col font-sans selection:bg-indigo-500 selection:text-white antialiased bg-radial-gradient">
             <Header
               isConnected={isConnected}
               isChecking={isCheckingHealth}
@@ -215,3 +227,4 @@ export default function App() {
     </Routes>
   );
 }
+

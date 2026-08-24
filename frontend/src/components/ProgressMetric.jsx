@@ -38,8 +38,8 @@ export default function ProgressMetric({ summary = {} }) {
   ];
 
   return (
-    <div className="rounded-2xl bg-zinc-900/90 border border-zinc-800 p-6 sm:p-7 shadow-xl backdrop-blur-md mb-8">
-      <div className="flex items-center justify-between mb-6 pb-4 border-b border-zinc-800">
+    <div className="rounded-2xl bg-[#111827] border border-[#1F2937] p-6 sm:p-7 shadow-xl backdrop-blur-md mb-8">
+      <div className="flex items-center justify-between mb-6 pb-4 border-b border-[#1F2937]">
         <div>
           <h3 className="text-base sm:text-lg font-bold text-zinc-100 flex items-center gap-2">
             <TrendingUp className="w-5 h-5 text-indigo-400" />
@@ -49,7 +49,7 @@ export default function ProgressMetric({ summary = {} }) {
             Benchmark distribution across ground truth test samples
           </p>
         </div>
-        <span className="text-xs font-mono text-zinc-400 bg-zinc-800 px-3 py-1 rounded-full border border-zinc-700">
+        <span className="text-xs font-mono text-zinc-400 bg-[#0B1120] px-3 py-1 rounded-full border border-[#1F2937]">
           Target: &gt;90%
         </span>
       </div>
@@ -74,7 +74,7 @@ export default function ProgressMetric({ summary = {} }) {
               </div>
 
               {/* Progress Track */}
-              <div className="w-full h-3 bg-zinc-950 rounded-full overflow-hidden border border-zinc-800/80 p-0.5 shadow-inner">
+              <div className="w-full h-3 bg-[#0B1120] rounded-full overflow-hidden border border-[#1F2937] p-0.5 shadow-inner">
                 <div
                   className={`h-full rounded-full bg-gradient-to-r ${item.barGradient} transition-all duration-700 ease-out shadow-sm`}
                   style={{ width: `${percent}%` }}
@@ -91,3 +91,4 @@ export default function ProgressMetric({ summary = {} }) {
     </div>
   );
 }
+
