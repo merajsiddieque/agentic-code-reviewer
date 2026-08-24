@@ -1,25 +1,121 @@
 # 🚀 Agentic Code Reviewer
 
-An intelligent multi-language AI code review and static analysis system that combines deterministic static analysis tools (AST parsing, Flake8, Bandit) with LLM reasoning via LangGraph and Google Gemini 3.6 Flash.
+> **An AI-powered multi-language code review platform built with LangGraph, FastAPI, React, Docker, Render, and Google Gemini 3.6 Flash.**
+
+Agentic Code Reviewer combines deterministic static analysis (AST parsing, security heuristics, code metrics) with LLM reasoning to generate **security audits, bug detection, best-practice recommendations, and secure refactored implementations** in a single workflow.
 
 ---
 
-## 🔐 Environment Variables & Security
+## ✨ Features
 
-> **IMPORTANT**: Never commit or expose your real `.env` files or API keys to GitHub.
+### 🤖 AI Code Review Dashboard
 
-To configure your environment variables:
+* Upload source code in multiple languages
+* LangGraph multi-agent orchestration
+* Automatic pipeline routing (Security / Structure / Full Review)
+* Executive summary with AI reasoning
+* Severity-based vulnerability analysis
+* Performance & readability recommendations
+* **Secure refactored implementation** generated automatically
+* Download complete review as Markdown
 
-1. Copy `backend/.env.example` to `backend/.env`:
-   ```bash
-   cp backend/.env.example backend/.env
-   ```
-   *(On Windows PowerShell: `Copy-Item backend/.env.example backend/.env`)*
+### 🛡️ Static Analysis Engine
 
-2. Open `backend/.env` and add your Google Gemini API key:
-   ```env
-   GOOGLE_API_KEY=your_google_api_key_here
-   ```
+* Python AST parsing
+* Code metrics extraction
+* Security vulnerability detection
+* Cyclomatic complexity analysis
+* Best-practice validation
+* Language-aware review pipeline
+
+### 📊 Developer Evaluation Harness
+
+A hidden developer-only dashboard available at:
+
+`/evaluation`
+
+It evaluates the AI reviewer against a labeled benchmark dataset using:
+
+* Precision
+* Recall
+* F1 Score
+* Exact Match Rate
+* Benchmark discrepancy analysis
+
+> This page is intended for developers and recruiters to evaluate the quality of the AI agent—not end users.
+
+---
+
+## 🖥️ User Dashboard
+
+The main application provides a complete AI security review workflow.
+
+### Security Overview
+
+* Security Score (0–10)
+* Issues Found
+* Lines of Code
+* Review Time
+* LangGraph execution route
+
+### LangGraph Pipeline
+
+```text
+Upload
+   ↓
+Router
+   ↓
+AST Analysis
+   ↓
+Code Metrics
+   ↓
+Security Scan
+   ↓
+Gemini 3.6 Flash
+   ↓
+Structured Markdown Report
+```
+
+### Generated Review Includes
+
+* Executive Summary
+* Code Metrics
+* Security Issues
+* Bugs & Logical Flaws
+* Readability & Style
+* Performance Analysis
+* Best Practices
+* **Secure Refactored Implementation**
+* Overall Code Quality Score
+
+---
+
+## 🌐 Supported Languages
+
+| Language    | Status |
+| ----------- | ------ |
+| Python      | ✅      |
+| JavaScript  | ✅      |
+| TypeScript  | ✅      |
+| React / JSX | ✅      |
+| Java        | ✅      |
+| HTML / CSS  | ✅      |
+| Markdown    | ✅      |
+| JSON / YAML | ✅      |
+
+---
+
+## 🏗️ Tech Stack
+
+| Layer            | Technology                   |
+| ---------------- | ---------------------------- |
+| Frontend         | React + Tailwind CSS + Vite  |
+| Backend          | FastAPI                      |
+| AI Orchestration | LangGraph                    |
+| LLM              | Google Gemini 3.6 Flash      |
+| Static Analysis  | Python AST + Bandit + Flake8 |
+| Deployment       | Docker + Render              |
+| Documentation    | Swagger / OpenAPI            |
 
 ---
 
@@ -28,56 +124,79 @@ To configure your environment variables:
 ```text
 agentic-code-reviewer/
 ├── backend/
-│   ├── app.py              # FastAPI application entry point & SPA routing
-│   ├── agent.py            # LangGraph agentic orchestration & SSE streaming
-│   ├── graph.py            # LangGraph StateGraph workflow definition
-│   ├── nodes.py            # Deterministic AST & LLM execution nodes
-│   ├── tools.py            # Multi-language static analysis tools
-│   ├── prompts.py          # System prompts and review templates
-│   ├── state.py            # LangGraph state schema (ReviewState)
-│   ├── models.py           # Gemini LLM client initialization
-│   ├── requirements.txt    # Backend dependencies
-│   └── .env.example        # Environment variables template
+│   ├── app.py
+│   ├── agent.py
+│   ├── graph.py
+│   ├── nodes.py
+│   ├── tools.py
+│   ├── prompts.py
+│   ├── state.py
+│   ├── llm_client.py
+│   ├── evaluation/
+│   └── .env.example
 │
 ├── frontend/
-│   ├── src/                # Modern React + Tailwind dashboard components
-│   ├── package.json        # Frontend dependencies (React, Lucide, Tailwind)
-│   └── vite.config.js      # Vite build configuration
+│   ├── src/components/
+│   ├── src/pages/
+│   └── src/services/
 │
-├── sample_code/            # Sample test code files across supported languages
-├── Dockerfile              # Multi-stage production container build
-├── docker-compose.yml      # Local Docker orchestration with secure env_file
-└── README.md               # Project documentation
+├── sample_code/
+├── Dockerfile
+├── docker-compose.yml
+└── README.md
 ```
 
 ---
 
-## ⚡ Quick Start
+## 🔐 Environment Variables
 
-### 1. Run via Docker (Recommended)
+> **Never commit your `.env` file or API keys to GitHub.**
 
-Make sure you have created `backend/.env` with your `GOOGLE_API_KEY`, then run:
+Create the environment file:
+
+```bash
+cp backend/.env.example backend/.env
+```
+
+Windows PowerShell:
+
+```powershell
+Copy-Item backend/.env.example backend/.env
+```
+
+Add your Gemini API key:
+
+```env
+GOOGLE_API_KEY=your_google_api_key_here
+```
+
+---
+
+## ⚡ Local Development
+
+### Run with Docker
 
 ```bash
 docker compose up --build
 ```
 
-The application will be accessible at [http://127.0.0.1:8000](http://127.0.0.1:8000).
+Open:
 
----
+```text
+http://localhost:8000
+```
 
-### 2. Local Development Setup
+### Run without Docker
 
-#### Backend:
+**Backend**
+
 ```bash
-# Set up virtual environment and install dependencies
-uv sync # or: pip install -r backend/requirements.txt
-
-# Run FastAPI backend
+uv sync
 uv run uvicorn backend.app:app --reload --port 8000
 ```
 
-#### Frontend:
+**Frontend**
+
 ```bash
 cd frontend
 npm install
@@ -86,11 +205,119 @@ npm run dev
 
 ---
 
-## 🔍 Key API Endpoints
+## ☁️ Deploy on Render
 
-- `GET /` — Serves the built React Frontend single-page application.
-- `POST /review` — Full multi-stage agentic code review report.
-- `GET /review/stream` — Real-time token streaming via Server-Sent Events (SSE).
-- `GET /health` — Dedicated health check endpoint.
-- `GET /docs` — Interactive Swagger API documentation.
-- `GET /openapi.json` — OpenAPI specification schema.
+This project is containerized and deployed as a **Docker Web Service** on Render.
+
+### 1. Fork or Clone the Repository
+
+```bash
+git clone https://github.com/merajsiddieque/agentic-code-reviewer.git
+```
+
+### 2. Create a New Web Service
+
+* **Runtime:** Docker
+* **Branch:** `main`
+* **Root Directory:** *(leave empty)*
+* **Instance:** Free (or Starter)
+
+### 3. Add Environment Variable
+
+| Key              | Value               |
+| ---------------- | ------------------- |
+| `GOOGLE_API_KEY` | Your Gemini API Key |
+
+### 4. Deploy
+
+Render automatically builds the Docker image and exposes the application over HTTPS.
+
+---
+
+## 🔍 API Endpoints
+
+| Method | Endpoint         | Description                    |
+| ------ | ---------------- | ------------------------------ |
+| GET    | `/`              | React Frontend                 |
+| POST   | `/review`        | AI Code Review                 |
+| GET    | `/review/stream` | SSE Streaming Review           |
+| GET    | `/health`        | Health Check                   |
+| GET    | `/docs`          | Swagger Documentation          |
+| GET    | `/openapi.json`  | OpenAPI Schema                 |
+| GET    | `/evaluation`    | Developer Evaluation Dashboard |
+
+---
+
+## 📈 Evaluation Harness
+
+The project includes a dedicated **Evaluation Harness** for measuring AI review quality.
+
+### Metrics
+
+* Precision
+* Recall
+* F1 Score
+* Exact Match Rate
+
+### Benchmark Dataset
+
+The benchmark suite contains labeled programs covering:
+
+* SQL Injection
+* Command Injection
+* Hardcoded Secrets
+* Insecure Deserialization
+* Path Traversal
+* Weak Cryptography
+* Mutable Defaults
+* Resource Leaks
+* Zero Division
+* Clean OOP Implementations
+
+The LangGraph agent reviews each benchmark and compares its findings against the expected ground truth to produce objective evaluation metrics.
+
+---
+
+## 🚀 Future Roadmap
+
+### GitHub Repository Analysis
+
+Paste a public GitHub repository URL and automatically:
+
+* Clone the repository
+* Detect project language
+* Analyze every supported source file
+* Identify vulnerable files
+* Rank files by security score
+* Generate repository-wide AI review
+* Export a complete Markdown audit report
+
+### Additional Planned Features
+
+* Pull Request review generation
+* Dependency vulnerability scanning
+* Multi-file contextual analysis
+* Interactive code diff suggestions
+* CVSS-based security scoring
+* Team analytics dashboard
+
+---
+
+## 👨‍💻 Author
+
+**Meraj Alam Siddique**
+
+AI Engineer • LangGraph • FastAPI • React • GenAI
+
+* **GitHub:** https://github.com/merajsiddieque
+* **LinkedIn:** https://www.linkedin.com/in/merajsiddique
+
+---
+
+## 📄 License
+
+Licensed under the **MIT License**.
+
+---
+
+> Built with ❤️ using **LangGraph, FastAPI, React, Docker, Render, Python AST, and Google Gemini 3.6 Flash**.
